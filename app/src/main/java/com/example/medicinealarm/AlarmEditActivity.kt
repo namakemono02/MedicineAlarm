@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
-import android.widget.RadioButton
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
@@ -26,8 +25,6 @@ import java.util.*
 class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelectedListener{
 
     private lateinit var Alarm: Realm
-    private lateinit var alarmTilte : String
-    private lateinit var alarmTitle2 : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +72,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                         val nextId = (maxId?.toLong() ?: 0L) +1
                         val alarm = db.createObject<MedicineAlarm>(nextId)
 
-
                         val drinktime = drinktimeText.text.toString().toDate("HH:mm")
                         if (drinktime!=null) {
                             alarm.drinktime=drinktime
@@ -95,7 +91,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                     Alarm.executeTransaction{db: Realm ->
                         val alarm = db.where<MedicineAlarm>()
                             .equalTo("id",alarmId).findFirst()
-
 
                         val drinktime = drinktimeText.text.toString().toDate()
                         if (drinktime!=null) {
@@ -143,21 +138,7 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
         val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, AlarmBroadcastReceiver:: class.java)
         val pending = PendingIntent.getBroadcast(this,0,intent,0)
-//        am.setRepeating(AlarmManager.RTC_WAKEUP,calendar.timeInMillis, AlarmManager.INTERVAL_DAY,pending) //最初しかアラームのアイコンでない？
-
-        when{
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis,null)
-                am.setAlarmClock(info,pending)
-            }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> {
-                am.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pending)
-            }
-            else -> {
-                am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pending)
-            }
-
-        }
+        am.setRepeating(AlarmManager.RTC_WAKEUP,calendar.timeInMillis, AlarmManager.INTERVAL_DAY,pending) //指定時刻から１日ごとにアラーム
     }
 
     //ダイアログで選択した時刻をテキストビューに表示する処理
