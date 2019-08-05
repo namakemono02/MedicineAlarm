@@ -26,6 +26,17 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
 
     private lateinit var Alarm: Realm
 
+    private fun registerInRealm(alarm : MedicineAlarm) {
+        alarm.title = timezoneText.text.toString()
+        //薬を飲む時刻を登録
+        val drinktime = drinktimeText.text.toString().toDate("HH:mm")
+        if (drinktime != null) {
+            alarm.drinktime = drinktime
+        } else {
+            Alarm.cancelTransaction()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm_edit)
@@ -75,14 +86,15 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                         val nextId = (maxId?.toLong() ?: 0L) +1
                         val alarm = db.createObject<MedicineAlarm>(nextId)
 
-                        val drinktime = drinktimeText.text.toString().toDate("HH:mm")
-                        if (drinktime!=null) {
-                            alarm.drinktime=drinktime
-                        }else{
-                            Alarm.cancelTransaction()
-                        }
-                        alarm.title=timezoneText.text.toString()
-                        //radiobuttonを戻す処理がわからん。whenを使えば力技でできないこともなさそう？
+                        registerInRealm(alarm)
+//                        val drinktime = drinktimeText.text.toString().toDate("HH:mm")
+//                        if (drinktime!=null) {
+//                            alarm.drinktime=drinktime
+//                        }else{
+//                            Alarm.cancelTransaction()
+//                        }
+//                        alarm.title=timezoneText.text.toString()
+//                        //radiobuttonを戻す処理がわからん。whenを使えば力技でできないこともなさそう？
                     }
                     Snackbar.make(view, "追加しました", Snackbar.LENGTH_SHORT)
                         .setAction("戻る") {finish()}
@@ -94,14 +106,11 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                     Alarm.executeTransaction{db: Realm ->
                         val alarm = db.where<MedicineAlarm>()
                             .equalTo("id",alarmId).findFirst()
-
-                        val drinktime = drinktimeText.text.toString().toDate()
-                        if (drinktime!=null) {
-                            alarm?.drinktime=drinktime
+                        if(alarm != null){
+                            registerInRealm(alarm)
                         }else{
-                            Alarm.cancelTransaction() //executeTransactionと競合？してアプリが落ちる　エラー時にトランザクションのキャンセルをさせないといけない
+                            Alarm.cancelTransaction()
                         }
-                        alarm?.title=timezoneText.text.toString()
                     }
                     Snackbar.make(view,"更新しました",Snackbar.LENGTH_SHORT)
                         .setAction("戻る") {finish()}
@@ -124,7 +133,7 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                 .show()
         }
 
-        //時刻入力処理
+        //時刻入力ダイアログを表示
         drinktimeText.setOnClickListener {
             val dialog = TimePickerFragment()
             dialog.show(supportFragmentManager,"time_dialog")
