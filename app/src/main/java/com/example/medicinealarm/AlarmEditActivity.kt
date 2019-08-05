@@ -55,7 +55,9 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
             val alartTime = "${alartDay} ${drinktimeText.text}".toDate()
             when{
                 alartTime != null -> {
-                    setAlarmManager(calendar)
+                    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val alarm = Alarm(calendar)
+                    alarm.setAlarmManager(alarmManager,this)
                     Toast.makeText(this,"${calendar.time}にアラームをセットしました", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
@@ -134,12 +136,12 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
     }
 
     //AlarmManagerにアラーム時刻を登録する処理
-    private fun setAlarmManager(calendar: Calendar){
-        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmBroadcastReceiver:: class.java)
-        val pending = PendingIntent.getBroadcast(this,0,intent,0)
-        am.setRepeating(AlarmManager.RTC_WAKEUP,calendar.timeInMillis, AlarmManager.INTERVAL_DAY,pending) //指定時刻から１日ごとにアラーム
-    }
+//    private fun setAlarmManager(calendar: Calendar){
+//        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        val intent = Intent(this, AlarmBroadcastReceiver:: class.java)
+//        val pending = PendingIntent.getBroadcast(this,0,intent,0)
+//        am.setRepeating(AlarmManager.RTC_WAKEUP,calendar.timeInMillis, AlarmManager.INTERVAL_DAY,pending) //指定時刻から１日ごとにアラーム
+//    }
 
     //ダイアログで選択した時刻をテキストビューに表示する処理
     override fun onSelected(hourOfDay: Int, minute: Int) {

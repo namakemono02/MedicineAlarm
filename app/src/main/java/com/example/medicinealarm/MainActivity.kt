@@ -24,7 +24,6 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(),AlartDialogs.Listener {
     //ダイアログに表示されたボタンを押した後の処理
-    //drinked,snooze,cancelはMainActivityに描きたい　setAlarmManagerが障害
     override fun drinked() {
         Toast.makeText(this,"次も続けて飲みましょう", Toast.LENGTH_SHORT).show()
     }
@@ -32,32 +31,13 @@ class MainActivity : AppCompatActivity(),AlartDialogs.Listener {
     override fun snooze() {
         Toast.makeText(this,"後で飲みましょう", Toast.LENGTH_SHORT).show()
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = System.currentTimeMillis()
-        calendar.add(Calendar.MINUTE,30)
-        setAlarmManager(calendar)
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alram = Alarm(calendar)
+        alram.snooze(alarmManager,this)
     }
 
     override fun cancel() {
         Toast.makeText(this,"そういう時もあります", Toast.LENGTH_SHORT).show()
-    }
-
-    //AlarmManagerにアラーム時刻を登録する処理
-    private fun setAlarmManager(calendar: Calendar){
-        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmBroadcastReceiver:: class.java)
-        val pending = PendingIntent.getBroadcast(this,0,intent,0)
-        when{
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis,null)
-                am.setAlarmClock(info,pending)
-            }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> {
-                am.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pending)
-            }
-            else -> {
-                am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pending)
-            }
-        }
     }
 
     private lateinit var medicineAlarmdatabase: Realm
