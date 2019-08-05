@@ -1,4 +1,9 @@
 package com.example.medicinealarm
 
-class handleRealm {
+import io.realm.Realm
+
+class handleRealm(realm: Realm) {
+    val realm : Realm=realm
+
+    
 }
