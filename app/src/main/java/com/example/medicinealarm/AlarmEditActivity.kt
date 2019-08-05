@@ -55,10 +55,11 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
             val alartTime = "${alartDay} ${drinktimeText.text}".toDate()
             when{
                 alartTime != null -> {
+                    calendar.time = alartTime
                     val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                     val alarm = Alarm(calendar)
                     alarm.setAlarmManager(alarmManager,this)
-                    Toast.makeText(this,"${calendar.time}にアラームをセットしました", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"${calendar.time}にアラームをセットしました", Toast.LENGTH_LONG).show()
                 }
                 else -> {
                     Toast.makeText(this,"時刻の形式がただしくありません",Toast.LENGTH_SHORT).show()
