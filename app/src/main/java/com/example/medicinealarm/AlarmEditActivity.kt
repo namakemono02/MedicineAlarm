@@ -135,14 +135,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
         Alarm.close()
     }
 
-    //AlarmManagerにアラーム時刻を登録する処理
-//    private fun setAlarmManager(calendar: Calendar){
-//        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        val intent = Intent(this, AlarmBroadcastReceiver:: class.java)
-//        val pending = PendingIntent.getBroadcast(this,0,intent,0)
-//        am.setRepeating(AlarmManager.RTC_WAKEUP,calendar.timeInMillis, AlarmManager.INTERVAL_DAY,pending) //指定時刻から１日ごとにアラーム
-//    }
-
     //ダイアログで選択した時刻をテキストビューに表示する処理
     override fun onSelected(hourOfDay: Int, minute: Int) {
         drinktimeText.text="%1$02d:%2$02d".format(hourOfDay,minute)

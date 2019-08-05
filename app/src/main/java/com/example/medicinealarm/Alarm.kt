@@ -40,7 +40,7 @@ class Alarm (calendar: Calendar){
 
     fun snooze(alarmManager: AlarmManager, context: Context){
         calendar.timeInMillis = System.currentTimeMillis()
-        calendar.add(Calendar.SECOND,5)
+        calendar.add(Calendar.MINUTE,30)
         val intent = Intent(context, AlarmBroadcastReceiver:: class.java)
         val pending = PendingIntent.getBroadcast(context,0,intent,0)
         setAlarmManager(alarmManager,context)

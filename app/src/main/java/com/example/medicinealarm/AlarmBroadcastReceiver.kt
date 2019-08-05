@@ -3,7 +3,6 @@ package com.example.medicinealarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 
 class AlarmBroadcastReceiver : BroadcastReceiver() {
     //アラーム受信後の処理
