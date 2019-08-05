@@ -16,7 +16,6 @@ class AlartDialogs : DialogFragment() {
         fun cancel()
     }
 
-
     private var listener: Listener? = null
 
     //アクティビティからフラグメントが呼ばれた時の処理
