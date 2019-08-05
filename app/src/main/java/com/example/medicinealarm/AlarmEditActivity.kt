@@ -98,7 +98,7 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                         if (drinktime!=null) {
                             alarm?.drinktime=drinktime
                         }else{
-                            Alarm.cancelTransaction() //executeTransactionと競合？してアプリが落ちる　エラー時にトランザクションのキャンセルをさせないといけない
+                            Alarm.cancelTransaction()
                         }
                         alarm?.title=timezoneText.text.toString()
                     }
