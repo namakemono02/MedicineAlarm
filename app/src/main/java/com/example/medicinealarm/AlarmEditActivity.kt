@@ -23,32 +23,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
 
     private lateinit var Alarm: Realm
 
-    private fun registerInRealm(alarm : MedicineAlarm) {
-        alarm.title = timezoneText.text.toString()
-        //薬を飲む時刻を登録
-        val drinktime = drinktimeText.text.toString().toDate("HH:mm")
-        if (drinktime != null) {
-            alarm.drinktime = drinktime
-        } else {
-            Alarm.cancelTransaction()
-        }
-    }
-
-    //データベースを新規作成する
-    private fun createDatabase(db: Realm): MedicineAlarm{
-        val maxId =db.where<MedicineAlarm>().max("id")
-        val nextId = (maxId?.toLong() ?: 0L) +1
-        val alarm = db.createObject<MedicineAlarm>(nextId)
-        return alarm
-    }
-
-    //更新用データベースを呼び出す
-    private fun callDatabase(db: Realm,alarmId : Long?): MedicineAlarm?{
-        val alarm = db.where<MedicineAlarm>()
-            .equalTo("id",alarmId).findFirst()
-        return alarm
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm_edit)
@@ -95,12 +69,20 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                 -1L -> {
                     Alarm.executeTransaction{ db: Realm ->
                         val alarm = createDatabase(Alarm)
-                        registerInRealm(alarm)
+                        if (null!=alarm){
+                            registerInRealm(alarm)
+                            Snackbar.make(view, "追加しました", Snackbar.LENGTH_SHORT)
+                                .setAction("戻る") {finish()}
+                                .setActionTextColor(Color.RED)
+                                .show()
+                        }else{
+                            Snackbar.make(view, "アラームが5件を超えています。1つ以上削除してください", Snackbar.LENGTH_SHORT)
+                                .setAction("戻る") {finish()}
+                                .setActionTextColor(Color.RED)
+                                .show()
+                        }
                     }
-                    Snackbar.make(view, "追加しました", Snackbar.LENGTH_SHORT)
-                        .setAction("戻る") {finish()}
-                        .setActionTextColor(Color.RED)
-                        .show()
+
                 }
                 //更新処理
                 else -> {
@@ -143,6 +125,39 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
     override fun onDestroy() {
         super.onDestroy()
         Alarm.close()
+    }
+
+    private fun registerInRealm(alarm : MedicineAlarm) {
+        alarm.title = timezoneText.text.toString()
+        //薬を飲む時刻を登録
+        val drinktime = drinktimeText.text.toString().toDate("HH:mm")
+        if (drinktime != null) {
+            alarm.drinktime = drinktime
+        } else {
+            Alarm.cancelTransaction()
+        }
+    }
+
+    //データベースを新規作成する
+    private fun createDatabase(db: Realm): MedicineAlarm?{
+        val maxId =db.where<MedicineAlarm>().max("id")
+        val nextId = (maxId?.toLong() ?: 0L) +1
+        when{
+            nextId<=5 -> {
+                val alarm = db.createObject<MedicineAlarm>(nextId)
+                return alarm
+            }
+            else -> {
+                return null
+            }
+        }
+    }
+
+    //更新用データベースを呼び出す
+    private fun callDatabase(db: Realm,alarmId : Long?): MedicineAlarm?{
+        val alarm = db.where<MedicineAlarm>()
+            .equalTo("id",alarmId).findFirst()
+        return alarm
     }
 
     //ダイアログで選択した時刻をテキストビューに表示する処理
