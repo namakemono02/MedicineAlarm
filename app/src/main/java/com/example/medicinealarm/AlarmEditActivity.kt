@@ -37,6 +37,21 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
         }
     }
 
+    //データベースを新規作成する
+    private fun createDatabase(db: Realm): MedicineAlarm{
+        val maxId =db.where<MedicineAlarm>().max("id")
+        val nextId = (maxId?.toLong() ?: 0L) +1
+        val alarm = db.createObject<MedicineAlarm>(nextId)
+        return alarm
+    }
+
+    //更新用データベースを呼び出す
+    private fun callDatabase(db: Realm,alarmId : Long?): MedicineAlarm?{
+        val alarm = db.where<MedicineAlarm>()
+            .equalTo("id",alarmId).findFirst()
+        return alarm
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm_edit)
@@ -44,9 +59,14 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
         //AlarmEditActivtyのデータ表示処理
         Alarm = Realm.getDefaultInstance()
         val alarmId = intent?.getLongExtra("alarm_id",-1L)
-        if(alarmId != -1L){ //既にDBに登録されている場合は、登録されたデータを表示する
-            val alarm = Alarm.where<MedicineAlarm>()
-                .equalTo("id",alarmId).findFirst()
+
+        if(alarmId != -1L){ //既存のDBがある場合
+//        val alarmId = intent?.getLongExtra("alarm_id",-1L)
+//        if(alarmId != -1L){ //既にDBに登録されている場合は、登録されたデータを表示する
+//            val alarm = Alarm.where<MedicineAlarm>()
+//                .equalTo("id",alarmId).findFirst()
+
+            val alarm=callDatabase(Alarm,alarmId)
             timezoneText.setText(alarm?.title)
             drinktimeText.setText(DateFormat.format("HH:mm",alarm?.drinktime))
             delete.visibility=View.VISIBLE
@@ -59,7 +79,7 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
             //アラーム時刻設定
             val calendar = Calendar.getInstance()
             val year =calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)+1
+            val month = calendar.get(Calendar.MONTH)+1 //文字列としてalartDayに代入しているから+1が必要
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             val alartDay = "%1$04d/%2$02d/%3$02d".format(year,month,day)
 
@@ -82,19 +102,11 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                 //新規登録処理
                 -1L -> {
                     Alarm.executeTransaction{ db: Realm ->
-                        val maxId =db.where<MedicineAlarm>().max("id")
-                        val nextId = (maxId?.toLong() ?: 0L) +1
-                        val alarm = db.createObject<MedicineAlarm>(nextId)
-
+//                        val maxId =db.where<MedicineAlarm>().max("id")
+//                        val nextId = (maxId?.toLong() ?: 0L) +1
+//                        val alarm = db.createObject<MedicineAlarm>(nextId)
+                        val alarm = createDatabase(Alarm)
                         registerInRealm(alarm)
-//                        val drinktime = drinktimeText.text.toString().toDate("HH:mm")
-//                        if (drinktime!=null) {
-//                            alarm.drinktime=drinktime
-//                        }else{
-//                            Alarm.cancelTransaction()
-//                        }
-//                        alarm.title=timezoneText.text.toString()
-//                        //radiobuttonを戻す処理がわからん。whenを使えば力技でできないこともなさそう？
                     }
                     Snackbar.make(view, "追加しました", Snackbar.LENGTH_SHORT)
                         .setAction("戻る") {finish()}
@@ -104,8 +116,9 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                 //更新処理
                 else -> {
                     Alarm.executeTransaction{db: Realm ->
-                        val alarm = db.where<MedicineAlarm>()
-                            .equalTo("id",alarmId).findFirst()
+//                        val alarm = db.where<MedicineAlarm>()
+//                            .equalTo("id",alarmId).findFirst()
+                        val alarm = callDatabase(Alarm,alarmId)
                         if(alarm != null){
                             registerInRealm(alarm)
                         }else{
