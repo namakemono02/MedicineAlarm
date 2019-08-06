@@ -1,11 +1,8 @@
 package com.example.medicinealarm
 
 import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -61,11 +58,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
         val alarmId = intent?.getLongExtra("alarm_id",-1L)
 
         if(alarmId != -1L){ //既存のDBがある場合
-//        val alarmId = intent?.getLongExtra("alarm_id",-1L)
-//        if(alarmId != -1L){ //既にDBに登録されている場合は、登録されたデータを表示する
-//            val alarm = Alarm.where<MedicineAlarm>()
-//                .equalTo("id",alarmId).findFirst()
-
             val alarm=callDatabase(Alarm,alarmId)
             timezoneText.setText(alarm?.title)
             drinktimeText.setText(DateFormat.format("HH:mm",alarm?.drinktime))
@@ -102,9 +94,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                 //新規登録処理
                 -1L -> {
                     Alarm.executeTransaction{ db: Realm ->
-//                        val maxId =db.where<MedicineAlarm>().max("id")
-//                        val nextId = (maxId?.toLong() ?: 0L) +1
-//                        val alarm = db.createObject<MedicineAlarm>(nextId)
                         val alarm = createDatabase(Alarm)
                         registerInRealm(alarm)
                     }
@@ -116,8 +105,6 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
                 //更新処理
                 else -> {
                     Alarm.executeTransaction{db: Realm ->
-//                        val alarm = db.where<MedicineAlarm>()
-//                            .equalTo("id",alarmId).findFirst()
                         val alarm = callDatabase(Alarm,alarmId)
                         if(alarm != null){
                             registerInRealm(alarm)
