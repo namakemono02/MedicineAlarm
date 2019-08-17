@@ -33,7 +33,7 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
 
         if(alarmId != -1L){ //既存のDBがある場合
             val alarm=callDatabase(Alarm,alarmId)
-            timezoneText.setText(alarm?.title)
+            timezoneView.setText(alarm?.title)
             drinktimeText.setText(DateFormat.format("HH:mm",alarm?.drinktime))
             delete.visibility=View.VISIBLE
         }else{
@@ -128,7 +128,7 @@ class AlarmEditActivity : AppCompatActivity(),  TimePickerFragment.OnTimeSelecte
     }
 
     private fun registerInRealm(alarm : MedicineAlarm) {
-        alarm.title = timezoneText.text.toString()
+        alarm.title = timezoneView.text.toString()
         //薬を飲む時刻を登録
         val drinktime = drinktimeText.text.toString().toDate("HH:mm")
         if (drinktime != null) {

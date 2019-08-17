@@ -22,13 +22,19 @@ class medicineAlarmAdapter(data: OrderedRealmCollection<MedicineAlarm>) :
     }
 
     class ViewHolder(cell :View) : RecyclerView.ViewHolder(cell){
-        val title : TextView = cell.findViewById(android.R.id.text1)
-        val drinktime: TextView = cell.findViewById(android.R.id.text2)
+
+        val title : TextView = cell.findViewById(R.id.timezoneView)
+        val drinktime: TextView = cell.findViewById(R.id.drinkTimeView)
+
+//        val title : TextView = cell.findViewById(android.R.id.text1)
+//        val drinktime: TextView = cell.findViewById(android.R.id.text2)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): medicineAlarmAdapter.ViewHolder {
         val inflater=LayoutInflater.from(parent.context)
-        val view = inflater.inflate(android.R.layout.simple_list_item_2,parent,false)
+//        val view = inflater.inflate(android.R.layout.simple_list_item_2,parent,false)
+        val view = inflater.inflate(R.layout.alarmlayout,parent,false)
         return ViewHolder(view)
     }
 
