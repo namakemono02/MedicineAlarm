@@ -24,5 +24,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/alarmSwitch" app:layout_constraintTop_toTopOf="@+id/drinkTimeView"
             app:layout_constraintStart_toEndOf="@+id/drinkTimeView"
-            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"/>
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

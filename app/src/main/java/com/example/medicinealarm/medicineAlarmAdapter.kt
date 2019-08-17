@@ -1,5 +1,6 @@
 package com.example.medicinealarm
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,7 @@ class medicineAlarmAdapter(data: OrderedRealmCollection<MedicineAlarm>) :
         val medicinealarm: MedicineAlarm? =getItem(position)
         holder.title.text = medicinealarm?.title
         holder.drinktime.text = android.text.format.DateFormat.format("HH:mm", medicinealarm?.drinktime)
+        holder.itemView.setBackgroundColor(if (position%2==0) Color.WHITE else Color.LTGRAY)
         //RcyclerViewのセルがタップされたことを通知するコールバック処理
         holder.itemView.setOnClickListener {
             listener?.invoke(medicinealarm?.id)
